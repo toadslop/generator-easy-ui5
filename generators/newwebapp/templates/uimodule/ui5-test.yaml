@@ -1,16 +1,16 @@
 specVersion: "2.2"
 metadata:
-  name: workreportsapp_uimodule
+  name: <%= projectname %>_<%= modulename %>
 type: application
 resources:
   configuration:
     paths:
-      webapp: uimodule/webapp
+      webapp: <%= modulename %>/webapp
 framework:
-  name: SAPUI5
+  name: <%= (ui5libs === "Local resources (OpenUI5)" || ui5libs === "Content delivery network (OpenUI5)") ? "OpenUI5" : "SAPUI5" %>
   version: 1.60.0
 server:
-  customMiddleware:
+<% if(platform === 'SAP NetWeaver'){ -%>
     - name: ui5-middleware-route-proxy
       afterMiddleware: compression
       configuration:
@@ -21,8 +21,9 @@ server:
             fromEnv: true
             user: UI5_USERNAME
             pass: UI5_PASSWORD
-            client: 333
+            client: <Your Client>
     - name: ui5-middleware-global-variables
       afterMiddleware: compression
       configuration:
         debug: false
+<% } -%>
