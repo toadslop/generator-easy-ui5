@@ -75,6 +75,11 @@ module.exports = class extends Generator {
       name: "newdir",
       message: "Would you like to create a new directory for the project?",
       default: true
+    }, {
+      type: "confirm",
+      name: "addons",
+      message: "Would you like to add Toadslop's custom addons?",
+      default: true
     }]).then((answers) => {
       if (answers.newdir) {
         this.destinationRoot(`${answers.namespace}.${answers.projectname}`);
@@ -171,6 +176,13 @@ module.exports = class extends Generator {
       packge.ui5.dependencies.push("ui5-task-nwabap-deployer");
       packge.ui5.dependencies.push("ui5-middleware-route-proxy");
       packge.scripts["deploy"] = "run-s build:ui";
+    }
+
+    if (oConfig.addons) {
+      packge.scripts["postinstall"] = "patch-package";
+      packge.devDependencies["patch-package"] = "^6.2.2";
+      packge.devDependencies["ui5-middleware-global-variables"] = "*";
+      packge.ui5.dependencies.push("ui5-middleware-global-variables");
     }
 
     await fileaccess.writeJSON.call(this, "/package.json", packge);
