@@ -1,0 +1,24 @@
+diff --git a/node_modules/ui5-middleware-route-proxy/lib/proxy.js b/node_modules/ui5-middleware-route-proxy/lib/proxy.js
+index 11c98d1..ffd9fe9 100644
+--- a/node_modules/ui5-middleware-route-proxy/lib/proxy.js
++++ b/node_modules/ui5-middleware-route-proxy/lib/proxy.js
+@@ -13,7 +13,8 @@ module.exports = function ({
+     dotenv.config();
+ 
+     return function (req, res, next) {
+-        res.header('Access-Control-Allow-Origin', '*');
++        if (res.header) {
++            res.header('Access-Control-Allow-Origin', '*');
+         res.header('Access-Control-Allow-Credentials', 'true');
+         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+         res.header('Access-Control-Allow-Headers', 'X-Requested-With, Accept, Origin, Referer, User-Agent, Content-Type, Authorization, X-Mindflash-SessionID');
+@@ -26,6 +27,9 @@ module.exports = function ({
+             next();
+             return;
+         }
++        }
++        
++        
+         // Check whether to intercept the call
+         var dirname = Object.keys(routing).filter(sPath => req.url.startsWith(sPath))
+ 

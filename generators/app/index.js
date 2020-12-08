@@ -33,10 +33,10 @@ module.exports = class extends Generator {
       name: "platform",
       message: "On which platform would you like to host the application?",
       choices: ["Static webserver",
-        "Application Router @ Cloud Foundry",
-        "Cloud Foundry HTML5 Application Repository",
-        "Fiori Launchpad on Cloud Foundry",
-        "Application Router @ SAP HANA XS Advanced",
+        // "Application Router @ Cloud Foundry",
+        // "Cloud Foundry HTML5 Application Repository",
+        // "Fiori Launchpad on Cloud Foundry",
+        // "Application Router @ SAP HANA XS Advanced",
         "SAP NetWeaver"],
       default: "Static webserver"
     }, {
@@ -62,7 +62,12 @@ module.exports = class extends Generator {
       message: "Where should your UI5 libs be served from?",
       choices: (props) => {
         return (props.platform !== "Fiori Launchpad on Cloud Foundry") ?
-          ["Content delivery network (OpenUI5)", "Content delivery network (SAPUI5)", "Local resources (OpenUI5)", "Local resources (SAPUI5)"] :
+          [
+            // "Content delivery network (OpenUI5)",
+            "Content delivery network (SAPUI5)",
+            // "Local resources (OpenUI5)",
+            "Local resources (SAPUI5)"
+          ] :
           ["Content delivery network (SAPUI5)"];
       },
       default: (props) => {
@@ -75,12 +80,7 @@ module.exports = class extends Generator {
       name: "newdir",
       message: "Would you like to create a new directory for the project?",
       default: true
-    }, {
-      type: "confirm",
-      name: "addons",
-      message: "Would you like to add Toadslop's custom addons?",
-      default: true
-    }]).then((answers) => {
+    },]).then((answers) => {
       if (answers.newdir) {
         this.destinationRoot(`${answers.namespace}.${answers.projectname}`);
       }
@@ -127,7 +127,8 @@ module.exports = class extends Generator {
         "karma-ci": "karma start karma-ci.conf.js",
         "clearCoverage": "shx rm -rf coverage",
         "karma": "run-s clearCoverage karma-ci",
-        "lint": "eslint ."
+        "lint": "eslint .",
+        "postinstall": "patch-package"
       },
       "devDependencies": {
         "shx": "^0.3.3",
@@ -138,11 +139,14 @@ module.exports = class extends Generator {
         "karma-coverage": "^2.0.3",
         "karma-ui5": "^2.3.1",
         "npm-run-all": "^4.1.5",
-        "eslint": "^7.14.0"
+        "eslint": "^7.14.0",
+        "ui5-middleware-global-variables": "*",
+        "patch-package": "^6.2.2",
       },
       "ui5": {
         "dependencies": [
           "ui5-middleware-livereload",
+          "ui5-middleware-global-variables",
         ]
       }
     };
@@ -155,19 +159,19 @@ module.exports = class extends Generator {
       packge.ui5.dependencies.push("ui5-middleware-cfdestination");
       packge.ui5.dependencies.push("ui5-task-zipper");
 
-      if (oConfig.platform.includes("Cloud Foundry")) {
-        packge.scripts["build:mta"] = "mbt build";
-        packge.scripts["deploy:cf"] = `cross-var cf deploy mta_archives/${oConfig.projectname}_$npm_package_version.mtar`;
-        packge.scripts["deploy"] = "run-s build:mta deploy:cf";
-      } else if (oConfig.platform === "Application Router @ SAP HANA XS Advanced") {
-        packge.scripts["build:mta"] = "mbt build -p=xsa";
-        packge.scripts["deploy:cf"] = `cross-var xs deploy mta_archives/${oConfig.projectname}_$npm_package_version.mtar`;
-        packge.scripts["deploy"] = "run-s build:mta deploy:xs";
-      }
+      // if (oConfig.platform.includes("Cloud Foundry")) {
+      //   packge.scripts["build:mta"] = "mbt build";
+      //   packge.scripts["deploy:cf"] = `cross-var cf deploy mta_archives/${oConfig.projectname}_$npm_package_version.mtar`;
+      //   packge.scripts["deploy"] = "run-s build:mta deploy:cf";
+      // } else if (oConfig.platform === "Application Router @ SAP HANA XS Advanced") {
+      //   packge.scripts["build:mta"] = "mbt build -p=xsa";
+      //   packge.scripts["deploy:cf"] = `cross-var xs deploy mta_archives/${oConfig.projectname}_$npm_package_version.mtar`;
+      //   packge.scripts["deploy"] = "run-s build:mta deploy:xs";
+      // }
 
-      if (oConfig.platform === "Fiori Launchpad on Cloud Foundry") {
-        packge.scripts.start = "ui5 serve --config=uimodule/ui5.yaml  --open flpSandbox.html";
-      }
+      // if (oConfig.platform === "Fiori Launchpad on Cloud Foundry") {
+      //   packge.scripts.start = "ui5 serve --config=uimodule/ui5.yaml  --open flpSandbox.html";
+      // }
     }
 
     if (oConfig.platform === "SAP NetWeaver") {
@@ -176,13 +180,6 @@ module.exports = class extends Generator {
       packge.ui5.dependencies.push("ui5-task-nwabap-deployer");
       packge.ui5.dependencies.push("ui5-middleware-route-proxy");
       packge.scripts["deploy"] = "run-s build:ui";
-    }
-
-    if (oConfig.addons) {
-      packge.scripts["postinstall"] = "patch-package";
-      packge.devDependencies["patch-package"] = "^6.2.2";
-      packge.devDependencies["ui5-middleware-global-variables"] = "*";
-      packge.ui5.dependencies.push("ui5-middleware-global-variables");
     }
 
     await fileaccess.writeJSON.call(this, "/package.json", packge);

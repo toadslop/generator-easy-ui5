@@ -1,0 +1,53 @@
+diff --git a/node_modules/ui5-task-nwabap-deployer/lib/ui5-task-nwabap-deployer.js b/node_modules/ui5-task-nwabap-deployer/lib/ui5-task-nwabap-deployer.js
+index 8f9f0ab..618c55a 100644
+--- a/node_modules/ui5-task-nwabap-deployer/lib/ui5-task-nwabap-deployer.js
++++ b/node_modules/ui5-task-nwabap-deployer/lib/ui5-task-nwabap-deployer.js
+@@ -18,7 +18,7 @@ require("dotenv").config();
+ module.exports = async function({ workspace, dependencies, options }) {
+     const oLogger = new Logger();
+ 
+-    if ((options.configuration && !options.configuration.connection) && !process.env.UI5_TASK_NWABAP_DEPLOYER__SERVER) {
++    if ((options.configuration && !options.configuration.connection) && !process.env.SERVER) {
+         return Promise.reject(new Error("Please provide a connection configuration."));
+     }
+ 
+@@ -26,25 +26,25 @@ module.exports = async function({ workspace, dependencies, options }) {
+         options.configuration.connection = {};
+     }
+ 
+-    let sServer = process.env.UI5_TASK_NWABAP_DEPLOYER__SERVER;
++    let sServer = process.env.SERVER;
+ 
+     if (options.configuration && options.configuration.connection && options.configuration.connection.server) {
+         sServer = options.configuration.connection.server;
+     }
+ 
+-    let sClient = process.env.UI5_TASK_NWABAP_DEPLOYER__CLIENT;
++    let sClient = process.env.CLIENT;
+ 
+     if (options.configuration && options.configuration.connection && options.configuration.connection.client) {
+         sClient = options.configuration.connection.client;
+     }
+ 
+     if ((options.configuration && !options.configuration.authentication) &&
+-        (!process.env.UI5_TASK_NWABAP_DEPLOYER__USER || !process.env.UI5_TASK_NWABAP_DEPLOYER__PASSWORD)) {
++        (!process.env.USERNAME || !process.env.PASSWORD)) {
+         return Promise.reject(new Error("Please provide an authentication configuration or set authentication environment variables (user name and password)."));
+     }
+ 
+-    let sUser = process.env.UI5_TASK_NWABAP_DEPLOYER__USER;
+-    let sPassword = process.env.UI5_TASK_NWABAP_DEPLOYER__PASSWORD;
++    let sUser = process.env.USERNAME;
++    let sPassword = process.env.PASSWORD;
+ 
+     if (options.configuration && options.configuration.authentication && options.configuration.authentication.user) {
+         sUser = options.configuration.authentication.user;
+@@ -58,7 +58,7 @@ module.exports = async function({ workspace, dependencies, options }) {
+         return Promise.reject(new Error("Please provide a UI5 configuration."));
+     }
+ 
+-    let sTransportNo = process.env.UI5_TASK_NWABAP_DEPLOYER__TRANSPORTNO;
++    let sTransportNo = process.env.TRANSPORTNO;
+     if (options.configuration && options.configuration.ui5 && options.configuration.ui5.transportNo) {
+         sTransportNo = options.configuration.ui5.transportNo;
+     }

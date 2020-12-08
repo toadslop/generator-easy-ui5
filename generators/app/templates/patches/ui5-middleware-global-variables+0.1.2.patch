@@ -1,0 +1,33 @@
+diff --git a/node_modules/ui5-middleware-global-variables/lib/globalVariables.js b/node_modules/ui5-middleware-global-variables/lib/globalVariables.js
+index 69f2f15..acf5192 100644
+--- a/node_modules/ui5-middleware-global-variables/lib/globalVariables.js
++++ b/node_modules/ui5-middleware-global-variables/lib/globalVariables.js
+@@ -11,8 +11,8 @@ let globalVariables = [];
+ if (typeof envVariables === "object") {
+     for (let key in envVariables) {
+         // env variable should start with 'UI5_GLOBAL_VAR' and should in format 'UI5_GLOBAL_VAR.placeholder'
+-        if (/^UI5_GLOBAL_VAR__(.+)$/i.test(key)) {
+-            let placeholderString = /^UI5_GLOBAL_VAR__(.+)$/i.exec(key)[1];
++        if (/^UI5_(.+)$/i.test(key)) {
++            let placeholderString = /^UI5_(.+)$/i.exec(key)[1];
+             globalVariables.push({
+                 placeholder: placeholderString,
+                 value: envVariables[key]
+@@ -43,7 +43,7 @@ module.exports = ({ resources, options }) => {
+             next();
+             return;
+         }
+-        if (req.path.endsWith("ui5-global-vars.js")) {
++        if (req.path && req.path.endsWith("ui5-global-vars.js") || req.originalUrl && req.originalUrl.endsWith("ui5-global-vars.js") ) {
+             let globalVariablesScript = "(function(){\n  $ui5GlobalVariables = {\n     _globalVariables: {\n";
+             for (let variable of globalVariables) {
+                 globalVariablesScript += `       "${variable.placeholder}": "${variable.value}",\n`;
+@@ -54,7 +54,7 @@ module.exports = ({ resources, options }) => {
+             if (debug) {
+                 log.info(`Created Global Variable Script with ${globalVariables.length} global variables`);
+             }
+-            res.type(".js");
++            if (res.type) { res.type(".js") };
+             res.end(globalVariablesScript);
+         } else {
+             next();

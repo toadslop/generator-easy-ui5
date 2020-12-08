@@ -8,12 +8,7 @@ resources:
       webapp: <%= modulename %>/webapp
 framework:
   name: <%= (ui5libs === "Local resources (OpenUI5)" || ui5libs === "Content delivery network (OpenUI5)") ? "OpenUI5" : "SAPUI5" %>
-  version: 1.84.0
-  libraries:
-    - name: sap.ui.core
-    - name: sap.m
-    - name: sap.ui.layout
-    - name: themelib_sap_fiori_3
+  version: 1.60.0
 server:
   customMiddleware:
     - name: ui5-middleware-livereload
@@ -42,12 +37,28 @@ builder:
       configuration:
         debug: false
         /sap/opu/odata/sap/:
-          target: http://<yourserver>:<yourserverport>
+          target: https://vhcals4hci.dummy.nodomain:44300
           auth:
-            fromEnv: false
-            user: <youruser>
-            pass: <yourpassword>
+            fromEnv: true
+            user: UI5_USERNAME
+            pass: UI5_PASSWORD
+            client: <Your Client>
+        /sap/public/bc/ui5_ui5/:
+          target: http://vhcals4hci.dummy.nodomain:50000
+          auth:
+            fromEnv: true
+            user: UI5_USERNAME
+            pass: UI5_PASSWORD
+            client: <Your Client>
+    - name: ui5-middleware-global-variables
+      afterMiddleware: compression
+      configuration:
+        debug: true
 builder:
+  resources:
+    excludes:
+      - "/test/**"
+      - "/localService/**"
   customTasks:
   - name: ui5-task-nwabap-deployer
     afterTask: generateVersionInfo
@@ -55,11 +66,6 @@ builder:
       resources:
         path: dist/<%= modulename %>
         pattern: "**/*.*"
-      connection:
-        server: http://<yourserver>:<yourserverport>
-      authentication:
-        user: <youruser>
-        password: <yourpassword>
       ui5:
         language: EN
         package: <yourpackage>

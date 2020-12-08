@@ -2,16 +2,19 @@ module.exports = function (config) {
   "use strict";
 
   config.set({
-    frameworks: ["ui5"], ui5: {
-      type: "application",
-      configPath: "uimodule/ui5.yaml",
-      paths: {
-        webapp: "uimodule/webapp"
-      }
-    },
-    browsers: ["Chrome"],
     browserConsoleLogOptions: {
-      level: "error"
-    }
+      level: "info",
+      format: "%b %T: %m",
+      terminal: true,
+    },
+    frameworks: ["ui5"],
+    ui5: {
+      configPath: "uimodule/ui5-test.yaml",
+      type: "application",
+      paths: {
+        webapp: "uimodule/webapp",
+      },
+    },
   });
+  require("karma-ui5/helper").configureIframeCoverage(config);
 };

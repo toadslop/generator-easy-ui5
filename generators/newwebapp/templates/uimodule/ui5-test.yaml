@@ -1,0 +1,28 @@
+specVersion: "2.2"
+metadata:
+  name: workreportsapp_uimodule
+type: application
+resources:
+  configuration:
+    paths:
+      webapp: uimodule/webapp
+framework:
+  name: SAPUI5
+  version: 1.60.0
+server:
+  customMiddleware:
+    - name: ui5-middleware-route-proxy
+      afterMiddleware: compression
+      configuration:
+        debug: false
+        /sap/public/bc/ui5_ui5/:
+          target: http://vhcals4hci.dummy.nodomain:50000
+          auth:
+            fromEnv: true
+            user: UI5_USERNAME
+            pass: UI5_PASSWORD
+            client: 333
+    - name: ui5-middleware-global-variables
+      afterMiddleware: compression
+      configuration:
+        debug: false
