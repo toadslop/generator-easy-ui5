@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="/resources/img/favicon.ico"
+      rel="shortcut icon"
+      type="image/x-icon"
+    />
+
+    <title><%= title %> - Mock Server</title>
+
+    <script
+      id="sap-ui-bootstrap"
+      src="/sap/public/bc/ui5_ui5/1/resources/sap-ui-cachebuster/sap-ui-core.js"
+      data-sap-ui-theme="sap_belize"
+      data-sap-ui-resourceroots='{
+      "<%= appId %>": "../"
+    }'
+      data-sap-ui-oninit="module:<%= appURI %>/test/initMockServer"
+      data-sap-ui-compatVersion="edge"
+      data-sap-ui-async="true"
+      data-sap-ui-frameOptions="trusted"></script>
+    <script src="/ui5-global-vars.js"></script>
+  </head>
+
+  <body class="sapUiBody">
+    <div
+      data-sap-ui-component
+      data-name="<%= appId %>"
+      data-id="container"
+      data-settings='{"id" : "<%=projectname%>"}'
+    ></div>
+  </body>
+</html>
